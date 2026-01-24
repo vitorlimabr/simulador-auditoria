@@ -1,0 +1,90 @@
+<div class="dashboard-container">
+    <div class="header">
+        <h1>Visão Geral da Auditoria</h1>
+        <p class="subtitle">Bem-vindo ao Sistema de Simulação de Auditoria Governamental</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <div class="icon-wrapper primary">
+                <span>📊</span>
+            </div>
+            <div class="stat-info">
+                <span class="label">Auditorias Ativas</span>
+                <span class="value">{{ activeAuditsCount() }}</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="icon-wrapper warning">
+                <span>⚠️</span>
+            </div>
+            <div class="stat-info">
+                <span class="label">Riscos Elevados</span>
+                <span class="value">{{ stats().highRisk }}</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="icon-wrapper success">
+                <span>✅</span>
+            </div>
+            <div class="stat-info">
+                <span class="label">Concluídas</span>
+                <span class="value">{{ stats().completed }}</span>
+            </div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="icon-wrapper danger">
+                <span>🚩</span>
+            </div>
+            <div class="stat-info">
+                <span class="label">Achados Críticos</span>
+                <span class="value">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="card recent-activity">
+            <div class="card-header">
+                <h3>Auditorias Recentes</h3>
+                <button class="btn-text">Ver tudo</button>
+            </div>
+            <ul class="activity-list">
+                @for (audit of recentAudits(); track audit.id) {
+                <li class="activity-item">
+                    <div class="bullet"></div>
+                    <div class="content">
+                        <span class="title">{{ audit.title }} ({{ audit.code }})</span>
+                        <span class="time">Início: {{ audit.startDate | date:'dd/MM/yyyy' }}</span>
+                        <span class="description">Status: <strong>{{ audit.status }}</strong> | Risco: {{
+                            audit.riskLevel }}</span>
+                    </div>
+                </li>
+                } @empty {
+                <li class="activity-item">
+                    <div class="content">Nenhuma auditoria encontrada.</div>
+                </li>
+                }
+            </ul>
+        </div>
+
+        <div class="card upcoming-deadlines">
+            <div class="card-header">
+                <h3>Próximos Prazos</h3>
+            </div>
+            <ul class="deadline-list">
+                <li class="deadline-item warning">
+                    <span class="date">15 JAN</span>
+                    <span class="task">Relatório Preliminar - Saúde</span>
+                </li>
+                <li class="deadline-item primary">
+                    <span class="date">20 JAN</span>
+                    <span class="task">Conclusão de Campo - Educação</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

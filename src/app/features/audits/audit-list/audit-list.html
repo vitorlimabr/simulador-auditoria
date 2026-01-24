@@ -1,0 +1,54 @@
+<div class="audit-list-container">
+    <div class="header">
+        <div class="title-section">
+            <h1>Auditorias</h1>
+            <p class="subtitle">Gerencie todas as auditorias do sistema</p>
+        </div>
+        <button class="btn btn-primary" routerLink="/audits/new">
+            <span class="icon">+</span> Nova Auditoria
+        </button>
+    </div>
+
+    <div class="card table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Título</th>
+                    <th>Departamento</th>
+                    <th>Status</th>
+                    <th>Risco</th>
+                    <th>Data Início</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (audit of audits(); track audit.id) {
+                <tr>
+                    <td class="code">{{ audit.code }}</td>
+                    <td class="title-cell">{{ audit.title }}</td>
+                    <td>{{ audit.department }}</td>
+                    <td>
+                        <span class="badge" [class]="audit.status">{{ audit.status }}</span>
+                    </td>
+                    <td>
+                        <span class="badge risk" [class]="audit.riskLevel">{{ audit.riskLevel }}</span>
+                    </td>
+                    <td>{{ audit.startDate | date:'dd/MM/yyyy' }}</td>
+                    <td class="actions">
+                        <button class="btn-icon" [routerLink]="['/audits', audit.id]">👁️</button>
+                        <button class="btn-icon" [routerLink]="['/audits', audit.id, 'edit']">✏️</button>
+                        <button class="btn-icon" [routerLink]="['/reports', audit.id]">🖨️</button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        Nenhuma auditoria cadastrada.
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

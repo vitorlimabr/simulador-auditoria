@@ -1,0 +1,64 @@
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h2>AuditGov</h2>
+    </div>
+
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/audits" routerLinkActive="active" class="nav-item">
+        <span class="icon">📁</span>
+        <span>Auditorias</span>
+      </a>
+      <a routerLink="/teams" routerLinkActive="active" class="nav-item">
+        <span class="icon">👥</span>
+        <span>Equipes</span>
+      </a>
+      <a routerLink="/reports" routerLinkActive="active" class="nav-item">
+        <span class="icon">📑</span>
+        <span>Relatórios</span>
+      </a>
+    </nav>
+
+    <div class="user-profile">
+      <div class="avatar">AD</div>
+      <div class="info">
+        <span class="name">Admin</span>
+        <span class="role">Auditor Chefe</span>
+      </div>
+    </div>
+
+    <div class="backup-section">
+      <span class="backup-title">Dados & Backup</span>
+      <div class="backup-actions">
+        <button (click)="exportData()" class="btn-backup" title="Exportar JSON">
+          <span class="icon">📥</span> Exportar
+        </button>
+        <label class="btn-backup" title="Importar JSON">
+          <span class="icon">📤</span> Importar
+          <input type="file" (change)="onFileSelected($event)" accept=".json" style="display: none;">
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="breadcrumbs">
+        <span>Início</span> / <span>Dashboard</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" routerLink="/audits/new">Nova Auditoria</button>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

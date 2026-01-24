@@ -1,0 +1,186 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    background-color: var(--background-color);
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--surface-color);
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+
+    .logo {
+        margin-bottom: 2rem;
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+    }
+
+    .nav-menu {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #f1f5f9;
+                color: var(--primary-color);
+            }
+
+            &.active {
+                background-color: #eff6ff;
+                color: var(--accent-color);
+            }
+
+            .icon {
+                font-size: 1.25rem;
+            }
+        }
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+
+            .name {
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: var(--text-main);
+            }
+
+            .role {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+            }
+        }
+    }
+
+    .backup-section {
+        margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+
+        .backup-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 0.75rem;
+
+            .btn-backup {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                background-color: #f8fafc;
+                border: 1px solid #e2e8f0;
+                color: var(--text-main);
+                padding: 0.625rem;
+                border-radius: 0.5rem;
+                font-size: 0.75rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+                &:hover {
+                    background-color: #f1f5f9;
+                    border-color: #cbd5e1;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+
+                .icon {
+                    font-size: 1rem;
+                    opacity: 0.7;
+                }
+            }
+        }
+    }
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .top-bar {
+        height: 64px;
+        background-color: var(--surface-color);
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+
+        .breadcrumbs {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+    }
+
+    .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+    }
+}
+
+@media print {
+    .sidebar, .top-bar, .backup-section, .user-profile {
+        display: none !important;
+    }
+    .app-layout { display: block !important; }
+    .main-content { margin: 0 !important; padding: 0 !important; }
+}

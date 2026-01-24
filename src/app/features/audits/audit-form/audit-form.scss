@@ -1,0 +1,283 @@
+.form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 4rem;
+
+    .header {
+        .title-section {
+            h1 {
+                font-size: 1.875rem;
+                margin-bottom: 0.5rem;
+                color: var(--primary-color);
+            }
+
+            .subtitle {
+                color: var(--text-muted);
+                margin: 0;
+            }
+        }
+    }
+
+    /* Tabs Styling */
+    .tabs {
+        display: flex;
+        gap: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+
+            &:hover {
+                color: var(--primary-color);
+                background-color: #f8fafc;
+            }
+
+            &.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+                background-color: white;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .section-desc {
+        margin-bottom: 1.5rem;
+
+        h3 {
+            margin-bottom: 0.25rem;
+            font-size: 1.125rem;
+            color: var(--text-main);
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    }
+
+    .finding-style-card {
+        background-color: #f8fafc;
+        border: 1px solid var(--accent-color);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0;
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+
+            h4 {
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--secondary-color);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+        }
+    }
+
+    .main-card {
+        background: white;
+        padding: 2rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Form Styles (Shared) */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        &.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        &.two-col {
+            grid-template-columns: 1fr 1fr;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        &.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* HELP ICON STYLE */
+        .help-icon {
+            background-color: #3b82f6;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: bold;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            // Nova Matriz de Riscos Layout
+            .risk-card {
+                border-left: 4px solid #f59e0b; // Amber for Risk
+            }
+
+            .risk-analysis-grid {
+                display: grid;
+                grid-template-columns: 1fr 1.5fr 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+
+                .analysis-box {
+                    background: #f8fafc;
+                    padding: 1rem;
+                    border-radius: 6px;
+                    border: 1px solid #e2e8f0;
+
+                    h5 {
+                        margin: 0 0 0.5rem 0;
+                        font-size: 0.85rem;
+                        text-transform: uppercase;
+                        color: #64748b;
+                        font-weight: 700;
+                    }
+
+                    &.inherent {
+                        border-top: 3px solid #ef4444;
+                    }
+
+                    &.residual {
+                        border-top: 3px solid #f59e0b;
+                    }
+                }
+
+                .controls-box {
+                    .form-group.full-height {
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    textarea {
+                        flex: 1;
+                        min-height: 120px;
+                    }
+                }
+            }
+
+            .scope-decision-grid {
+                display: grid;
+                grid-template-columns: 1fr 200px 1.5fr;
+                gap: 1.5rem;
+                margin-top: 1rem;
+
+                .audit-question-box {
+                    background: #eff6ff;
+                    padding: 1rem;
+                    border: 1px solid #bfdbfe;
+                    border-radius: 6px;
+
+                    textarea {
+                        border-color: #3b82f6;
+                        margin-bottom: 0.5rem;
+                    }
+                }
+            }
+
+            .separator {
+                margin: 1.5rem 0;
+                border: 0;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            cursor: help;
+            opacity: 0.8;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+        }
+    }
+
+    .add-row-action {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions-fixed {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+        margin-top: 1rem;
+    }
+}

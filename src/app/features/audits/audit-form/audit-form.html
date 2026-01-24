@@ -1,0 +1,332 @@
+<div class="form-container">
+    <div class="header">
+        <div class="title-section">
+            <h1>{{ isEditMode() ? 'Editar Auditoria' : 'Nova Auditoria' }}</h1>
+            <p class="subtitle">{{ isEditMode() ? 'Atualize as informações' : 'Planejamento e definição de escopo' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab() === 'geral'" (click)="setActiveTab('geral')">1. Visão Geral
+            & Controles</button>
+        <button class="tab-btn" [class.active]="activeTab() === 'riscos'" (click)="setActiveTab('riscos')">2. Avaliação
+            de Riscos</button>
+        <button class="tab-btn" [class.active]="activeTab() === 'planejamento'"
+            (click)="setActiveTab('planejamento')">3. Matriz de Planejamento (PQAE)</button>
+    </div>
+
+    <!-- Geral Tab (Inside main card) -->
+    <div class="card form-card main-card" *ngIf="activeTab() === 'geral'">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="code">Código da Auditoria</label>
+                    <input id="code" type="text" formControlName="code" placeholder="Ex: AUD-2024-003">
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Departamento / Órgão</label>
+                    <input id="department" type="text" formControlName="department"
+                        placeholder="Ex: Secretaria de Saúde">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="title">Título da Auditoria</label>
+                    <input id="title" type="text" formControlName="title" placeholder="Descreva o objetivo principal">
+                </div>
+
+                <div class="form-group">
+                    <label for="startDate">Data de Início</label>
+                    <input id="startDate" type="date" formControlName="startDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="riskLevel">Nível de Risco Inicial</label>
+                    <select id="riskLevel" formControlName="riskLevel">
+                        <option value="baixo">Baixo</option>
+                        <option value="medio">Médio</option>
+                        <option value="alto">Alto</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="teamId">Equipe de Auditoria Responsável</label>
+                    <select id="teamId" formControlName="teamId">
+                        <option value="">-- Selecione uma Equipe --</option>
+                        <option *ngFor="let team of teamService.teams()" [value]="team.id">
+                            {{ team.title }} ({{ team.members.length }} membros)
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="keyControls">Entendimento da Unidade / Controles-Chave (Etapa 1)</label>
+                    <textarea id="keyControls" formControlName="keyControls" rows="4"
+                        placeholder="Descreva os controles-chave esperados e o entendimento da área..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" routerLink="/audits">Cancelar</button>
+                <button type="button" class="btn btn-primary" (click)="setActiveTab('riscos')">Próximo: Avaliação de
+                    Riscos</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Planning Matrix Tab (Detailed 9-field view) -->
+    <div *ngIf="activeTab() === 'planejamento'" class="tab-content-wrapper">
+        <div class="section-desc">
+            <h3>Matriz de Planejamento Detalhada</h3>
+            <p>Preencha os campos para definir o escopo da auditoria. Passe o mouse sobre o ícone (?) para ajuda.</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div formArrayName="planningMatrix">
+                <div class="finding-style-card" *ngFor="let row of planningMatrix.controls; let i=index"
+                    [formGroupName]="i">
+                    <div class="card-header">
+                        <h4>Questão #{{i + 1}}</h4>
+                        <button type="button" class="btn-icon danger" (click)="removeMatrixRow(i)"
+                            *ngIf="planningMatrix.length > 1">🗑️</button>
+                    </div>
+
+                    <!-- Row 1: Questão (Principal) -->
+                    <div class="form-group full">
+                        <label>
+                            Questões de Auditoria
+                            <span class="help-icon" [title]="helpTexts['question']">?</span>
+                        </label>
+                        <textarea formControlName="question" placeholder="Ex: A aquisição seguiu os ditames da lei?"
+                            rows="3"></textarea>
+                    </div>
+
+                    <!-- Row 2: Informações e Fontes -->
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label>
+                                Informações Requeridas
+                                <span class="help-icon" [title]="helpTexts['informationRequired']">?</span>
+                            </label>
+                            <textarea formControlName="informationRequired" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Fontes de Informação
+                                <span class="help-icon" [title]="helpTexts['sourceOfInformation']">?</span>
+                            </label>
+                            <textarea formControlName="sourceOfInformation" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Procedimentos e Detalhamento -->
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label>
+                                Procedimentos
+                                <span class="help-icon" [title]="helpTexts['procedure']">?</span>
+                            </label>
+                            <textarea formControlName="procedure" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Detalhamento do Procedimento
+                                <span class="help-icon" [title]="helpTexts['procedureDetail']">?</span>
+                            </label>
+                            <textarea formControlName="procedureDetail" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Objetos, Responsável, Período -->
+                    <div class="form-grid three-col">
+                        <div class="form-group">
+                            <label>
+                                Objetos
+                                <span class="help-icon" [title]="helpTexts['objects']">?</span>
+                            </label>
+                            <textarea formControlName="objects" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Membro Responsável
+                                <span class="help-icon" [title]="helpTexts['responsibleMember']">?</span>
+                            </label>
+                            <textarea formControlName="responsibleMember" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Período
+                                <span class="help-icon" [title]="helpTexts['period']">?</span>
+                            </label>
+                            <textarea formControlName="period" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Possíveis Achados -->
+                    <div class="form-group full">
+                        <label>
+                            Possíveis Achados
+                            <span class="help-icon" [title]="helpTexts['possibleFindings']">?</span>
+                        </label>
+                        <textarea formControlName="possibleFindings" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-row-action">
+                <button type="button" class="btn btn-secondary small" (click)="addMatrixRow()">+ Adicionar
+                    Questão</button>
+            </div>
+
+            <div class="form-actions-fixed">
+                <button type="button" class="btn btn-secondary" (click)="setActiveTab('riscos')">Voltar: Riscos</button>
+                <button type="submit" class="btn btn-success" [disabled]="form.invalid">
+                    {{ isEditMode() ? 'Salvar Edição' : 'Concluir Planejamento' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Risks Matrix Tab (Distinct items) -->
+    <div *ngIf="activeTab() === 'riscos'" class="tab-content-wrapper">
+        <div class="section-desc">
+            <h3>Matriz de Riscos</h3>
+            <p>Identifique os eventos de risco, avalie a probabilidade e o impacto, e defina respostas.</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div formArrayName="risks">
+                <div class="finding-style-card risk-card" *ngFor="let risk of risks.controls; let i=index"
+                    [formGroupName]="i">
+                    <div class="card-header">
+                        <h4>Risco #{{i + 1}}</h4>
+                        <button type="button" class="btn-icon danger" (click)="removeRiskRow(i)">🗑️</button>
+                    </div>
+
+                    <!-- 1. Identificação -->
+                    <div class="form-grid four-col">
+                        <div class="form-group">
+                            <label>Ref. <span class="help-icon" [title]="helpTexts['reference']">?</span></label>
+                            <input formControlName="reference" type="text" placeholder="R1">
+                        </div>
+                        <div class="form-group" style="grid-column: span 3;">
+                            <label>Processo <span class="help-icon" [title]="helpTexts['process']">?</span></label>
+                            <input formControlName="process" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Evento de Risco (O que pode acontecer?) <span class="help-icon"
+                                [title]="helpTexts['event']">?</span></label>
+                        <textarea formControlName="event" rows="2"></textarea>
+                    </div>
+
+                    <!-- 2. Risco Inerente & Controles -->
+                    <div class="risk-analysis-grid">
+                        <!-- Inerente -->
+                        <div class="analysis-box inherent">
+                            <h5>Risco Inerente</h5>
+                            <div class="form-group">
+                                <label>Probabilidade</label>
+                                <select formControlName="probability">
+                                    <option value="baixa">Baixa</option>
+                                    <option value="media">Média</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="muito_alta">Muito Alta</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Nível Inerente</label>
+                                <select formControlName="inherentRiskLevel" class="risk-level-select">
+                                    <option value="baixo">Baixo</option>
+                                    <option value="medio">Médio</option>
+                                    <option value="alto">Alto</option>
+                                    <option value="extremo">Extremo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Controles -->
+                        <div class="controls-box">
+                            <div class="form-group full-height">
+                                <label>Controles Identificados <span class="help-icon"
+                                        [title]="helpTexts['controls']">?</span></label>
+                                <textarea formControlName="controlsIdentified"
+                                    placeholder="Descreva os controles existentes..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Avaliação Resposta/Residual -->
+                        <div class="analysis-box residual">
+                            <h5>Avaliação Resposta</h5>
+                            <div class="form-group">
+                                <label>Eficácia <span class="help-icon"
+                                        [title]="helpTexts['effectiveness']">?</span></label>
+                                <select formControlName="controlEffectiveness">
+                                    <option value="fraco">Fraco</option>
+                                    <option value="satisfatorio">Satisfatório</option>
+                                    <option value="forte">Forte</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Risco Residual <span class="help-icon"
+                                        [title]="helpTexts['residualRisk']">?</span></label>
+                                <select formControlName="residualRiskLevel" class="risk-level-select">
+                                    <option value="baixo">Baixo</option>
+                                    <option value="medio">Médio</option>
+                                    <option value="alto">Alto</option>
+                                    <option value="critico">Crítico</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="separator">
+
+                    <!-- 3. Decisão de Escopo & O ELO -->
+                    <div class="scope-decision-grid">
+                        <div class="form-group">
+                            <label>Relevância/Materialidade</label>
+                            <textarea formControlName="relevance" rows="3"
+                                placeholder="Impacto financeiro/social..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Viabilidade</label>
+                            <select formControlName="viability">
+                                <option value="normal">Normal</option>
+                                <option value="dificil">Difícil</option>
+                                <option value="inviavel">Inviável</option>
+                            </select>
+                            <label style="margin-top: 1rem;">Incluir no Escopo?</label>
+                            <select formControlName="includeInMatrix" style="font-weight: bold;">
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não</option>
+                            </select>
+                        </div>
+
+                        <!-- THE LINK -->
+                        <div class="form-group audit-question-box">
+                            <label style="color: #0f172a; font-weight: 700;">Questão de Auditoria (O Link com
+                                Planejamento)</label>
+                            <textarea formControlName="auditQuestion" rows="3"
+                                placeholder="Formule a questão que avaliará este risco..."></textarea>
+                            <small class="hint">Esta questão será a base da Matriz de Planejamento.</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="add-row-action">
+                <button type="button" class="btn btn-secondary small" (click)="addRiskRow()">+ Adicionar Risco</button>
+            </div>
+
+            <div class="form-actions-fixed">
+                <button type="button" class="btn btn-secondary" (click)="setActiveTab('geral')">Voltar: Geral</button>
+                <button type="button" class="btn btn-primary" (click)="setActiveTab('planejamento')">Próximo: Matriz
+                    PQAE</button>
+            </div>
+        </form>
+    </div>
+</div>

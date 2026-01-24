@@ -1,0 +1,194 @@
+<div class="report-container" *ngIf="audit() as data">
+
+    <div class="screen-controls">
+        <a routerLink="/audits" class="back-link">← Voltar</a>
+        <div class="report-actions">
+            <div class="report-tabs">
+                <button [class.active]="activeTab() === 'programa'" (click)="setActiveTab('programa')">Programa de
+                    Auditoria</button>
+                <button [class.active]="activeTab() === 'riscos'" (click)="setActiveTab('riscos')">Matriz de
+                    Riscos</button>
+                <button [class.active]="activeTab() === 'achados'" (click)="setActiveTab('achados')">Matriz de
+                    Achados</button>
+            </div>
+            <button class="btn-print" (click)="printReport()">🖨️ Imprimir PDF</button>
+        </div>
+    </div>
+
+    <!-- REPORT DOCUMENT STRUCTURE -->
+    <div class="document-page landscape"> <!-- Added landscape class suggestion -->
+        <div class="doc-header">
+            <h2>{{ data.department }}</h2>
+            <h1>{{ data.title }}</h1>
+            <div class="meta">
+                <span><strong>Código:</strong> {{ data.code }}</span>
+                <span><strong>Data:</strong> {{ data.startDate | date:'dd/MM/yyyy' }}</span>
+                <span><strong>Status:</strong> {{ data.status }}</span>
+            </div>
+        </div>
+
+        <!-- PROGRAMA DE AUDITORIA (9 Columns) -->
+        <div class="report-section" *ngIf="activeTab() === 'programa'">
+            <h3 class="section-title">Matriz de Planejamento Detalhada</h3>
+            <table class="report-table dense">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Questão de Auditoria</th>
+                        <th style="width: 10%">Info. Requerida</th>
+                        <th style="width: 10%">Fontes de Info.</th>
+                        <th style="width: 10%">Procedimento</th>
+                        <th style="width: 15%">Detalhamento</th>
+                        <th style="width: 10%">Objetos</th>
+                        <th style="width: 10%">Responsável</th>
+                        <th style="width: 5%">Período</th>
+                        <th style="width: 15%">Possíveis Achados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data.planningMatrix">
+                        <td>{{ item.question }}</td>
+                        <td>{{ item.informationRequired }}</td>
+                        <td>{{ item.sourceOfInformation }}</td>
+                        <td>{{ item.procedure }}</td>
+                        <td>{{ item.procedureDetail }}</td>
+                        <td>{{ item.objects }}</td>
+                        <td>{{ item.responsibleMember }}</td>
+                        <td class="center">{{ item.period }}</td>
+                        <td>{{ item.possibleFindings }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MATRIZ DE DE DEFINIÇÃO DE ESCOPO (RISCOS) -->
+        <div class="report-section" *ngIf="activeTab() === 'riscos'">
+            <h3 class="section-title">Matriz de Definição de Escopo e Riscos (Detalhada)</h3>
+            <table class="report-table dense risk-report-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">Ref</th>
+                        <th style="width: 20%">Evento de Risco</th>
+                        <th style="width: 10%">Risco Inerente</th>
+                        <th style="width: 20%">Controles Identificados</th>
+                        <th style="width: 10%">Eficácia</th>
+                        <th style="width: 10%">Risco Residual</th>
+                        <th style="width: 25%">Questão de Auditoria (Link)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data.risks">
+                        <td class="center"><strong>{{ item.reference }}</strong></td>
+                        <td>
+                            {{ item.event }}
+                            <div class="meta-info" *ngIf="item.process"><small>Proc: {{ item.process }}</small></div>
+                        </td>
+
+                        <!-- Risco Inerente -->
+                        <td class="center risk-cell" [class]="item.inherentRiskLevel">
+                            {{ item.inherentRiskLevel | titlecase }} <br>
+                            <small>Prob: {{ item.probability }}</small>
+                        </td>
+
+                        <td>{{ item.controlsIdentified || 'Não identificado' }}</td>
+
+                        <td class="center">{{ item.controlEffectiveness | titlecase }}</td>
+
+                        <!-- Risco Residual -->
+                        <td class="center risk-cell" [class]="item.residualRiskLevel">
+                            {{ item.residualRiskLevel | titlecase }}
+                        </td>
+
+                        <td class="audit-question-cell">
+                            {{ item.auditQuestion }}
+                            <div class="scope-tag" [class.included]="item.includeInMatrix === 'Sim'">
+                                Escopo: {{ item.includeInMatrix }}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!data.risks?.length">
+                        <td colspan="7" class="empty">Nenhum risco registrado.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MATRIZ DE ACHADOS (Detailed Grid) -->
+        <div class="report-section" *ngIf="activeTab() === 'achados'">
+            <h3 class="section-title">Matriz de Achados</h3>
+
+            <div *ngFor="let finding of findings()" class="finding-block detailed">
+                <div class="finding-header-report">
+                    <span class="id-tag">Achado</span>
+                    <h4>{{ finding.title }}</h4>
+                    <span class="severity-badge-report" [class]="finding.severity">{{ finding.severity }}</span>
+                </div>
+
+                <div class="finding-grid combined-grid">
+                    <!-- Row 1 -->
+                    <div class="field full">
+                        <strong>Situação Encontrada:</strong>
+                        <p>{{ finding.description }}</p>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="field">
+                        <strong>Objetos:</strong>
+                        <p>{{ finding.objects }}</p>
+                    </div>
+                    <div class="field">
+                        <strong>Critério:</strong>
+                        <p>{{ finding.criteria }}</p>
+                    </div>
+                    <div class="field">
+                        <strong>Evidência:</strong>
+                        <p>{{ finding.evidence }}</p>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="field">
+                        <strong>Causa:</strong>
+                        <p>{{ finding.cause }}</p>
+                    </div>
+                    <div class="field">
+                        <strong>Efeito:</strong>
+                        <p>{{ finding.effect }}</p>
+                    </div>
+
+                    <!-- Row 4 -->
+                    <div class="field full highlight">
+                        <strong>Proposta de Encaminhamento:</strong>
+                        <p>{{ finding.recommendation }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="findings().length === 0" class="empty-msg">Nenhum achado registrado.</div>
+        </div>
+
+        <!-- RELAÇÃO DA EQUIPE DE AUDITORIA (Compacta) -->
+        <div class="report-section team-relation" *ngIf="team() as teamData">
+            <h3 class="section-title">Equipe de Auditoria Responsável</h3>
+            <div class="relation-box">
+                <p class="team-title-label"><strong>Equipe: {{ teamData.title }}</strong></p>
+                <table class="report-table auditor-list">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">Nome do Auditor</th>
+                            <th style="width: 50%">E-mail Institucional</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let member of teamData.members">
+                            <td>{{ member.name }}</td>
+                            <td>{{ member.email }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="doc-footer">
+            <p>Gerado pelo Simulador de Auditoria Pública - {{ activeTab() | uppercase }}</p>
+        </div>
+    </div>
+</div>

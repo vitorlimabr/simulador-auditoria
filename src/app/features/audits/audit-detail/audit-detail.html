@@ -1,0 +1,187 @@
+<div class="detail-container" *ngIf="audit() as auditData">
+    <!-- Header -->
+    <div class="header">
+        <div class="breadcrumbs">
+            <a routerLink="/audits">Auditorias</a> / <span>{{ auditData.code }}</span>
+        </div>
+        <div class="title-section">
+            <h1>{{ auditData.title }}</h1>
+            <span class="badge" [class]="auditData.status">{{ auditData.status }}</span>
+            <button class="btn btn-secondary btn-sm" [routerLink]="['/audits', auditData.id, 'edit']">✏️ Editar
+                Planejamento</button>
+        </div>
+        <p class="department">{{ auditData.department }}</p>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="audit-grid">
+        <!-- Left Column: Info & Findings -->
+        <div class="main-column">
+
+            <!-- Planning Matrix View -->
+            <div class="card section-card">
+                <h3>Matriz de Planejamento</h3>
+                <div class="matrix-view">
+                    <div class="matrix-item" *ngFor="let item of auditData.planningMatrix; let i=index">
+                        <div class="matrix-header">Questão #{{i+1}}: {{ item.question }}</div>
+                        <div class="matrix-body">
+                            <p><strong>Critério:</strong> {{ item.criteria || 'N/A' }}</p>
+                            <p><strong>Info Requerida:</strong> {{ item.informationRequired || 'N/A' }}</p>
+                            <p><strong>Procedimento:</strong> {{ item.procedure || 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="empty-state" *ngIf="!auditData.planningMatrix?.length">
+                        Matriz de planejamento não definida.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Findings Section -->
+            <div class="findings-section">
+                <div class="section-header">
+                    <h3>Matriz de Achados (Execução)</h3>
+                    <button class="btn btn-primary btn-sm" (click)="toggleFindingForm()">
+                        {{ showFindingForm() ? 'Cancelar' : '+ Novo Achado' }}
+                    </button>
+                </div>
+
+                <!-- Add Finding Form (Updated Structure) -->
+                <div class="card form-card" *ngIf="showFindingForm()">
+                    <form [formGroup]="findingForm" (ngSubmit)="saveFinding()">
+
+                        <!-- Row 1: Descrição e Severidade -->
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 3;">
+                                <label>
+                                    Descrição do Achado (Título)
+                                    <span class="help-icon" [title]="helpTexts.title">?</span>
+                                </label>
+                                <input formControlName="title" placeholder="Resumo do problema encontrado">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Severidade</label>
+                                <select formControlName="severity">
+                                    <option value="baixa">Baixa</option>
+                                    <option value="media">Média</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="critica">Crítica</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Situação Encontrada -->
+                        <div class="form-group full">
+                            <label>
+                                Situação Encontrada
+                                <span class="help-icon" [title]="helpTexts.description">?</span>
+                            </label>
+                            <textarea formControlName="description" rows="3"></textarea>
+                        </div>
+
+                        <!-- Row 3: Objetos, Critério, Evidência -->
+                        <div class="form-grid three-col">
+                            <div class="form-group">
+                                <label>
+                                    Objetos
+                                    <span class="help-icon" [title]="helpTexts.objects">?</span>
+                                </label>
+                                <textarea formControlName="objects" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Critério
+                                    <span class="help-icon" [title]="helpTexts.criteria">?</span>
+                                </label>
+                                <textarea formControlName="criteria" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Evidência
+                                    <span class="help-icon" [title]="helpTexts.evidence">?</span>
+                                </label>
+                                <textarea formControlName="evidence" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Causa e Efeito -->
+                        <div class="form-grid two-col">
+                            <div class="form-group">
+                                <label>
+                                    Causa
+                                    <span class="help-icon" [title]="helpTexts.cause">?</span>
+                                </label>
+                                <textarea formControlName="cause" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Efeito
+                                    <span class="help-icon" [title]="helpTexts.effect">?</span>
+                                </label>
+                                <textarea formControlName="effect" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Encaminhamento -->
+                        <div class="form-group full">
+                            <label>
+                                Encaminhamento (Proposta)
+                                <span class="help-icon" [title]="helpTexts.recommendation">?</span>
+                            </label>
+                            <textarea formControlName="recommendation" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success" [disabled]="findingForm.invalid">
+                                {{ editingFindingId() ? 'Atualizar Achado' : 'Salvar Achado' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Findings List -->
+                <div class="findings-list">
+                    <div class="card finding-card" *ngFor="let finding of findings()">
+                        <div class="finding-header">
+                            <div class="finding-title">
+                                <span class="severity-dot" [class]="finding.severity"></span>
+                                <h4>{{ finding.title }}</h4>
+                            </div>
+                            <div class="finding-actions">
+                                <span class="status-tag" [class]="finding.status">{{ finding.status }}</span>
+                                <button class="btn-icon" (click)="startEditFinding(finding)"
+                                    title="Editar Achado">✏️</button>
+                            </div>
+                        </div>
+                        <p class="finding-desc">{{ finding.description }}</p>
+                        <div class="finding-footer">
+                            <span class="label">Proposta:</span> {{ finding.recommendation }}
+                        </div>
+                    </div>
+
+                    <div class="empty-state" *ngIf="findings().length === 0 && !showFindingForm()">
+                        Nenhum achado registrado ainda. Inicie a execução clicando em "Novo Achado".
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Meta Info -->
+        <div class="sidebar-column">
+            <div class="card meta-card">
+                <h4>Detalhes</h4>
+                <div class="meta-item">
+                    <span class="label">Risco</span>
+                    <span class="value risk" [class]="auditData.riskLevel">{{ auditData.riskLevel }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">Início</span>
+                    <span class="value">{{ auditData.startDate | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">Auditor</span>
+                    <span class="value">Logado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

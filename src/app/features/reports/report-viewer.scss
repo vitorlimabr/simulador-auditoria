@@ -1,0 +1,353 @@
+/* Report Viewer CSS */
+.report-container {
+    padding: 2rem;
+    background-color: #e2e8f0;
+    min-height: 100vh;
+}
+
+.screen-controls {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .back-link {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            text-decoration: underline;
+            color: #334155;
+        }
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .report-tabs {
+            display: flex;
+            background: #fff;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+
+            button {
+                border: none;
+                background: none;
+                padding: 8px 16px;
+                cursor: pointer;
+                border-radius: 6px;
+                font-weight: 500;
+                color: #64748b;
+
+                &.active {
+                    background-color: #eff6ff;
+                    color: #2563eb;
+                }
+            }
+        }
+
+        .btn-print {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            &:hover {
+                background-color: #1d4ed8;
+            }
+        }
+    }
+}
+
+/* A4 Page Simulation */
+.document-page {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 20mm;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    position: relative;
+
+    /* Logic for landscape orientation simulation on screen ONLY
+       Note: @page rule handles real print orientation */
+    &.landscape {
+        width: 297mm;
+        // height: 210mm; // Let content expand
+    }
+
+    .doc-header {
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+
+        h2 {
+            font-size: 1rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin: 0.5rem 0;
+        }
+
+        .meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+    }
+
+    .section-title {
+        background-color: #f1f5f9;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #2563eb;
+    }
+
+    /* Table Styles */
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem; // Slightly smaller for dense tables
+
+        th,
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        &.dense {
+            font-size: 0.75rem; // Smaller font for 9-column matrix
+
+            th,
+            td {
+                padding: 4px 6px;
+            }
+        }
+
+        .risk-cell {
+            font-weight: 600;
+
+            &.alto {
+                color: #dc2626;
+            }
+
+            &.medio {
+                color: #d97706;
+            }
+
+            &.baixo {
+                color: #16a34a;
+            }
+        }
+    }
+
+    /* Finding Block Detailed */
+    .finding-block {
+        border: 1px solid #cbd5e1;
+        margin-bottom: 1.5rem;
+        page-break-inside: avoid;
+
+        .finding-header-report {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            h4 {
+                margin: 0;
+                font-size: 1rem;
+                color: #0f172a;
+                flex: 1;
+                margin-left: 1rem;
+            }
+
+            .id-tag {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #64748b;
+                text-transform: uppercase;
+            }
+
+            .severity-badge-report {
+                font-size: 0.75rem;
+                padding: 2px 8px;
+                border-radius: 99px;
+                border: 1px solid;
+                text-transform: uppercase;
+                font-weight: 600;
+
+                &.alta {
+                    background: #fef2f2;
+                    color: #dc2626;
+                    border-color: #fecaca;
+                }
+
+                &.media {
+                    background: #fffbeb;
+                    color: #d97706;
+                    border-color: #fde68a;
+                }
+
+                &.baixa {
+                    background: #f0fdf4;
+                    color: #16a34a;
+                    border-color: #bbf7d0;
+                }
+            }
+        }
+
+        .finding-grid {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); // 3 columns by default
+            gap: 1rem;
+
+            .field {
+                strong {
+                    display: block;
+                    font-size: 0.75rem;
+                    color: #64748b;
+                    margin-bottom: 2px;
+                    text-transform: uppercase;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 0.9rem;
+                    color: #334155;
+                    white-space: pre-wrap;
+                }
+
+                &.full {
+                    grid-column: 1 / -1;
+                }
+
+                &.highlight {
+                    background-color: #fafafa;
+                    padding: 0.5rem;
+                    border-left: 3px solid #64748b;
+                }
+            }
+        }
+    }
+
+    .doc-footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    // Team Relation Section (Compact)
+    .team-relation {
+        margin-top: 2rem;
+
+        // Remove the forced page break for the relation list
+        // page-break-before: always; 
+
+        .relation-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 1rem;
+            background-color: #fafafa;
+
+            .team-title-label {
+                margin: 0 0 1rem 0;
+                font-size: 0.95rem;
+                color: #1e293b;
+            }
+
+            .auditor-list {
+                margin-top: 0.5rem;
+
+                th,
+                td {
+                    padding: 6px 10px;
+                }
+
+                th {
+                    background-color: #f1f5f9;
+                }
+            }
+        }
+    }
+}
+
+/* Print Only Styles */
+@media print {
+
+    /* Hide screen-only controls */
+    .screen-controls {
+        display: none !important;
+    }
+
+    /* Reset container for full page print */
+    .report-container {
+        padding: 0 !important;
+        background: white !important;
+        min-height: auto !important;
+    }
+
+    /* Document Page Printing */
+    .document-page {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+        /* Some padding for the paper */
+        box-shadow: none !important;
+        min-height: auto !important;
+
+        &.landscape {
+            width: 100% !important;
+            /* Browser @page handles orientation */
+        }
+    }
+
+    /* Avoid page breaks inside blocks */
+    .report-section,
+    .finding-block,
+    .relation-box {
+        page-break-inside: avoid;
+    }
+
+    /* Force landscape orientation via CSS if supported */
+    @page {
+        size: landscape;
+        margin: 1cm;
+    }
+}
